@@ -216,7 +216,7 @@ def show_post(post_id):
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
-          if not current_user.is_authenticated:
+        if not current_user.is_authenticated:
             flash("You need to login or register to comment.")
             return redirect(url_for("login"))
               
