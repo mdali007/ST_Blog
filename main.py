@@ -217,7 +217,7 @@ def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
         if not current_user.is_authenticated:
-            flash("You need to login or register to comment.")
+            flash("You need to login or register to Post your story.")
             return redirect(url_for("login"))
               
         new_post = BlogPost(
