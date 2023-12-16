@@ -37,7 +37,9 @@
           >
         </div>
         {% endif %}
-
+        <form method="POST" action="{{ url_for('like_post', post_id=post.id) }}">
+    <button type="submit">Like</button>
+</form>
         <!-- Comments Area -->
         <!-- Load the CKEditor -->
         {{ ckeditor.load() }}
