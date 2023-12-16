@@ -71,9 +71,20 @@ class BlogPost(db.Model):
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
-    img_url = db.Column(db.String(250), nullable=False)
+    img_url = db.Column(db.String(250), nullable=True)
     # Parent relationship to the comments
     comments = relationship("Comment", back_populates="parent_post")
+    # likes for post
+    likes = db.Column(db.Integer, default=0)
+    likers = relationship("Like", back_populates="post")
+
+
+class Like(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    post_id = db.Column(db.Integer, db.ForeignKey("blog_posts.id"))
+    post = relationship("BlogPost", back_populates="likers")
+    liker = relationship("User", back_populates="liked_posts")
 
 
 # Create a User table for all your registered users
@@ -88,6 +99,7 @@ class User(UserMixin, db.Model):
     posts = relationship("BlogPost", back_populates="author")
     # Parent relationship: "comment_author" refers to the comment_author property in the Comment class.
     comments = relationship("Comment", back_populates="comment_author")
+    liked_posts = relationship("Like", back_populates="liker")
 
 
 # Create a table for the comments on the blog posts
@@ -232,6 +244,33 @@ def add_new_post():
         db.session.commit()
         return redirect(url_for("get_all_posts"))
     return render_template("make-post.html", form=form, current_user=current_user)
+
+# for handle likes
+@app.route('/like/<int:post_id>', methods=['POST'])
+def like_post(post_id):
+    if not current_user.is_authenticated:
+        flash("You need to login to like a post.")
+        return redirect(url_for('login'))
+
+    post = db.get_or_404(BlogPost, post_id)
+    user = current_user
+
+    # Check if the user has already liked the post
+    if Like.query.filter_by(user_id=user.id, post_id=post.id).first():
+        flash("You have already liked this post.")
+        return redirect(url_for('get_all_posts'))
+
+    # Increment the like count for the post
+    post.likes += 1
+
+    # Create a new like record
+    new_like = Like(user=user, post=post)
+    db.session.add(new_like)
+    db.session.commit()
+
+    flash("Post liked successfully.")
+    return redirect(url_for('get_all_posts'))
+
 
 
 # Use a decorator so only an admin user can edit a post
