@@ -13,14 +13,14 @@
           <span class="meta">
             Posted by <a href="#">{{ post.author.name }}</a> on {{ post.date }}
           </span>
-          <p class="like-section">
+          <!--<p class="like-section">
             <span class="like-count">{{ post.likes }} Likes</span>
             {% if current_user.is_authenticated %}
               <form method="POST" action="{{ url_for('like_post', post_id=post.id) }}">
                 <button type="submit" class="btn btn-primary">Like</button>
               </form>
             {% endif %}
-          </p>
+          </p>-->
         </div>
       </div>
     </div>
@@ -44,9 +44,9 @@
           >
         </div>
         {% endif %}
-        <form method="POST" action="{{ url_for('like_post', post_id=post.id) }}">
+        <!--<form method="POST" action="{{ url_for('like_post', post_id=post.id) }}">
     <button type="submit">Like</button>
-</form>
+</form>-->
         <!-- Comments Area -->
         <!-- Load the CKEditor -->
         {{ ckeditor.load() }}
